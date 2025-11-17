@@ -1,4 +1,3 @@
-# Dockerfile (SSH + stunnel)
 FROM debian:bullseye
 
 RUN apt-get update && \
@@ -13,11 +12,12 @@ ARG SSH_PASS=proxyuser
 RUN useradd -m -s /bin/bash ${SSH_USER} && \
     echo "${SSH_USER}:${SSH_PASS}" | chpasswd
 
-# 可选：公钥认证（更安全）
+# 环境变量：公钥 & 证书内容
 ENV SSH_PUBLIC_KEY=""
-COPY entrypoint.sh /entrypoint.sh
+ENV STUNNEL_CERT=""
+
 COPY stunnel.conf /etc/stunnel/stunnel.conf
-COPY stunnel.pem /etc/stunnel/stunnel.pem
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 22 443
